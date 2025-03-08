@@ -14,10 +14,16 @@ class ApiClient:
     def post(self, path = "/", json = None):
         url = f"{self.base_url}{path}"
         return requests.post(url = url, json = json)
+    
+    def put(self, path = "/", json = None):
+        url = f"{self.base_url}{path}"
+        return requests.put(url = url, json = json)
 
     def delete(self, path = "/"):
         url = f"{self.base_url}{path}"
         return requests.delete(url = url)
+    
+    
     
 @pytest.fixture
 def api_url():
@@ -58,3 +64,28 @@ def create_new_pet(api_url):
     created_id = response_data['id']
     yield created_id
     delete_pet(api_url=api_url, pet_id=created_id)
+
+@pytest.fixture
+def update_pet(api_url, create_new_pet):
+    fake = Faker()
+    new_pet = create_new_pet
+    pet = {
+            "id": new_pet,
+            "category": {
+                "id": 0,
+                "name": "CATEGORY"
+            },
+            "name": f"{fake.first_name()}",
+            "photoUrls": [
+                "string"
+            ],
+            "tags": [
+                {
+                "id": 0,
+                "name": "string"
+                }
+            ],
+            "status": "available"
+    }
+    yield pet 
+    
